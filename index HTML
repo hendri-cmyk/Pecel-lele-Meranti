@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pecel Lele Meranti - Gurih, Renyah & Sambal Pedas Mantap</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans & Volkhov -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Volkhov:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet.js CSS & JS for Interactive Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                            900: '#881337',
+                        },
+                        amberbrand: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        darkbg: '#121212',
+                        cardbg: '#1e1e1e'
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['Volkhov', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-overlay {
+            background: linear-gradient(180deg, rgba(18, 18, 18, 0.3) 0%, rgba(18, 18, 18, 0.95) 100%);
+        }
+        .hero-pattern {
+            background-color: #121212;
+            background-image: radial-gradient(#be123c 0.75px, transparent 0.75px), radial-gradient(#be123c 0.75px, #121212 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0,15px 15px;
+            opacity: 0.95;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #be123c;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e11d48;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased selection:bg-brand-600 selection:text-white">
+
+    <!-- Toast Notification Box -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-brand-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-brand-500">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <span id="toast-message" class="font-medium text-sm">Pesanan ditambahkan!</span>
+    </div>
+
+    <header class="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-gray-800 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-11 h-11 bg-gradient-to-br from-brand-600 to-amberbrand-500 rounded-xl flex items-center justify-center shadow-lg shadow-brand-900/50 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-fire-burner text-white text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-serif flex items-center gap-1.5">
+                        Pecel Lele <span class="text-brand-500">Meranti</span>
+                    </span>
+                    <span class="block text-[10px] text-amber-400 font-semibold tracking-wider uppercase">Sambal Ulek Cobek Asli</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm text-gray-300">
+                <a href="#home" class="hover:text-brand-500 transition-colors py-1">Beranda</a>
+                <a href="#menu" class="hover:text-brand-500 transition-colors py-1">Menu Utama</a>
+                <a href="#paket" class="hover:text-brand-500 transition-colors py-1">Paket Hemat</a>
+                <a href="#tentang" class="hover:text-brand-500 transition-colors py-1">Tentang Kami</a>
+                <a href="#testimoni" class="hover:text-brand-500 transition-colors py-1">Testimoni</a>
+                <a href="#lokasi" class="hover:text-brand-500 transition-colors py-1">Lokasi & Buka</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button onclick="toggleCart()" class="relative bg-gray-900 hover:bg-gray-800 text-gray-200 p-2.5 sm:px-4 sm:py-2.5 rounded-xl border border-gray-800 flex items-center gap-2 transition hover:border-brand-600/50">
+                    <i class="fa-solid fa-utensils text-brand-500 text-lg"></i>
+                    <span class="hidden sm:inline text-sm font-semibold">Pesanan Saya</span>
+                    <span id="cart-badge" class="bg-brand-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                </button>
+                <a href="#menu" class="hidden sm:inline-flex bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-brand-900/30 hover:shadow-brand-600/40 transition-all transform active:scale-95 items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping"></i> Pesan Sekarang
+                </a>
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden bg-gray-900 p-2.5 text-gray-300 hover:text-white rounded-xl border border-gray-800">
+                    <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-900 border-b border-gray-800 px-4 pt-2 pb-6 space-y-3">
+            <a href="#home" onclick="toggleMobileMenu()" class="block py-2 text-gray-300 hover:text-brand-500 font-medium border-b border-gray-800/50">Beranda</a>
+            <a href="#menu" onclick="toggleMobileMenu()" class="block py-2 text-gray-300 hover:text-brand-500 font-medium border-b border-gray-800/50">Menu Utama</a>
+            <a href="#paket" onclick="toggleMobileMenu()" class="block py-2 text-gray-300 hover:text-brand-500 font-medium border-b border-gray-800/50">Paket Hemat</a>
+            <a href="#tentang" onclick="toggleMobileMenu()" class="block py-2 text-gray-300 hover:text-brand-500 font-medium border-b border-gray-800/50">Tentang Kami</a>
+            <a href="#testimoni" onclick="toggleMobileMenu()" class="block py-2 text-gray-300 hover:text-brand-500 font-medium border-b border-gray-800/50">Testimoni</a>
+            <a href="#lokasi" onclick="toggleMobileMenu()" class="block py-2 text-gray-300 hover:text-brand-500 font-medium">Lokasi & Buka</a>
+        </div>
+    </header>
+
+    <section id="home" class="relative hero-pattern min-h-[90vh] flex items-center py-16 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Column Text -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-brand-900/40 border border-brand-700/50 px-4 py-2 rounded-full text-brand-300 text-xs sm:text-sm font-semibold tracking-wide">
+                        <span class="flex h-2 w-2 rounded-full bg-brand-500 animate-ping"></span>
+                        <i class="fa-solid fa-fire text-amber-400"></i> Sensasi Sambal Ulek Terasi Fresh & Gurih
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black font-serif text-white leading-tight tracking-tight">
+                        Nikmatnya <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 via-amber-400 to-amber-500">Lele Crispy</span> & Sambal Mantap Khas Meranti!
+                    </h1>
+                    
+                    <p class="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        Daging ikan lele segar pilihan digoreng garing di luar, lembut di dalam. Disajikan hangat dengan nasi uduk/biasa, lalapan segar, dan sambal ulek racikan resep rahasia Meranti.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <a href="#menu" class="w-full sm:w-auto bg-gradient-to-r from-brand-600 via-brand-700 to-amberbrand-600 hover:opacity-95 text-white font-bold px-8 py-4 rounded-2xl shadow-xl shadow-brand-900/40 hover:shadow-brand-600/50 transition-all flex items-center justify-center gap-3 text-base">
+                            <i class="fa-solid fa-utensils"></i> Lihat Menu & Pesan
+                        </a>
+                        <a href="#paket" class="w-full sm:w-auto bg-gray-900 hover:bg-gray-800 text-amber-400 border border-amber-500/30 font-bold px-7 py-4 rounded-2xl transition-all flex items-center justify-center gap-2 text-base">
+                            <i class="fa-solid fa-tags text-amber-400"></i> Promo Paket Hemat
+                        </a>
+                    </div>
+
+                    <!-- Highlights Badge Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-gray-800/80">
+                        <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800 text-center">
+                            <i class="fa-solid fa-certificate text-amber-400 text-xl mb-1"></i>
+                            <p class="text-xs font-bold text-gray-200">100% Halal</p>
+                            <p class="text-[10px] text-gray-400">Bahan Terjamin</p>
+                        </div>
+                        <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800 text-center">
+                            <i class="fa-solid fa-pepper-hot text-brand-500 text-xl mb-1"></i>
+                            <p class="text-xs font-bold text-gray-200">Sambal Ulek</p>
+                            <p class="text-[10px] text-gray-400">Dibuat Mendadak</p>
+                        </div>
+                        <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800 text-center">
+                            <i class="fa-solid fa-fish text-blue-400 text-xl mb-1"></i>
+                            <p class="text-xs font-bold text-gray-200">Ikan Fresh</p>
+                            <p class="text-[10px] text-gray-400">Setiap Hari</p>
+                        </div>
+                        <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800 text-center">
+                            <i class="fa-solid fa-motorcycle text-emerald-400 text-xl mb-1"></i>
+                            <p class="text-xs font-bold text-gray-200">Siap Kirim</p>
+                            <p class="text-[10px] text-gray-400">Area Meranti & Sekitar</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column Featured Image/Card -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        <!-- Glow effect -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-brand-600 to-amber-500 rounded-3xl blur-xl opacity-30 animate-pulse"></div>
+                        
+                        <div class="relative bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
+                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1000&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/600x500/1e1e1e/f43f5e?text=Pecel+Lele+Meranti';"
+                                 alt="Pecel Lele Meranti Crispy" 
+                                 class="w-full h-80 sm:h-96 object-cover hover:scale-105 transition-transform duration-500">
+                            
+                            <div class="p-6 bg-gradient-to-t from-gray-950 via-gray-900 to-transparent">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <span class="text-xs font-extrabold text-amber-400 uppercase tracking-widest">Menu Andalan</span>
+                                        <h3 class="text-xl font-bold text-white font-serif">Paket Lele Goreng Meranti</h3>
+                                    </div>
+                                    <span class="bg-brand-600 text-white font-bold text-sm px-3 py-1 rounded-full shadow">
+                                        Rp 18.000
+                                    </span>
+                                </div>
+                                <p class="text-gray-400 text-xs sm:text-sm mb-4">
+                                    Include 1 Lele Crispy Jumbo + Nasi Uduk Warm + Sambal Ulek Terasi + Lalapan Kemangi & Mentimun Segar.
+                                </p>
+                                <button onclick="addToCart('Paket Lele Goreng Meranti', 18000, 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=200&auto=format&fit=crop')" 
+                                        class="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> Tambah Ke Pesanan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="paket" class="py-12 bg-gray-900 border-y border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 bg-gradient-to-r from-brand-900/60 via-gray-900 to-amber-950/40 p-6 sm:p-8 rounded-3xl border border-brand-800/40">
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 bg-brand-600/20 border border-brand-500/30 rounded-2xl flex items-center justify-center text-brand-500 text-3xl shrink-0">
+                        <i class="fa-solid fa-gift"></i>
+                    </div>
+                    <div>
+                        <span class="bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-md uppercase tracking-wider border border-amber-500/30">Promo Spesial Bulan Ini</span>
+                        <h3 class="text-2xl font-extrabold text-white font-serif mt-1">Paket Rombongan "Kenyang Bareng"</h3>
+                        <p class="text-gray-300 text-sm mt-0.5">Beli 4 Paket Lele/Ayam Komplek FREE 2 Es Teh Manis Jumbo + Sambal Extra!</p>
+                    </div>
+                </div>
+                <button onclick="addToCart('Paket Rombongan Kenyang Bareng (4 Porsi)', 78000, 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=200&auto=format&fit=crop')" 
+                        class="shrink-0 bg-amber-500 hover:bg-amber-400 text-gray-950 font-extrabold px-6 py-3.5 rounded-xl shadow-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-cart-plus"></i> Ambil Promo (Rp 78.000)
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section (Dikembalikan ke Posisi Semula Atas) -->
+    <section id="menu" class="py-20 bg-gray-900/50 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Title -->
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <h2 class="text-xs font-extrabold text-brand-500 uppercase tracking-widest mb-2">Pilihan Sajian Lezat</h2>
+                <h3 class="text-3xl sm:text-4xl font-black font-serif text-white">Menu Utama Pecel Lele Meranti</h3>
+                <p class="text-gray-400 text-sm mt-3">Pilih hidangan favoritmu. Semua dimasak mendadak saat dipesan agar selalu segar, hangat, dan crispy!</p>
+            </div>
+
+            <!-- Category Filter Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-10">
+                <button onclick="filterMenu('all')" class="category-btn active border px-5 py-2.5 rounded-full font-medium text-sm transition bg-brand-600 text-white border-brand-500" data-category="all">
+                    🔥 Semua Menu
+                </button>
+                <button onclick="filterMenu('lele-ayam')" class="category-btn border px-5 py-2.5 rounded-full font-medium text-sm transition bg-gray-900 text-gray-300 border-gray-800 hover:bg-gray-800" data-category="lele-ayam">
+                    🐟 Lele & Ayam
+                </button>
+                <button onclick="filterMenu('bebek-seafood')" class="category-btn border px-5 py-2.5 rounded-full font-medium text-sm transition bg-gray-900 text-gray-300 border-gray-800 hover:bg-gray-800" data-category="bebek-seafood">
+                    🦆 Bebek & Seafood
+                </button>
+                <button onclick="filterMenu('pendamping')" class="category-btn border px-5 py-2.5 rounded-full font-medium text-sm transition bg-gray-900 text-gray-300 border-gray-800 hover:bg-gray-800" data-category="pendamping">
+                    🧆 Tahu, Tempe & Sayur
+                </button>
+                <button onclick="filterMenu('minuman')" class="category-btn border px-5 py-2.5 rounded-full font-medium text-sm transition bg-gray-900 text-gray-300 border-gray-800 hover:bg-gray-800" data-category="minuman">
+                    🍹 Minuman Segar
+                </button>
+            </div>
+
+            <!-- Menu Grid -->
+            <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Menu Item 1 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="lele-ayam">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Lele+Goreng';"
+                                 alt="Lele Goreng Crispy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-3 right-3 bg-amber-500 text-gray-950 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow">
+                                <i class="fa-solid fa-star"></i> 4.9 (Best Seller)
+                            </span>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Lele Goreng Crispy Meranti</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 15.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                1 ekor ikan lele jumbo berbumbu gurih rempah, digoreng garing renyah. Free lalapan & sambal cobek.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Lele Goreng Crispy Meranti', 15000, 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 2 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="lele-ayam">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Ayam+Goreng';"
+                                 alt="Ayam Goreng Penyet" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-3 right-3 bg-brand-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                                🔥 Pedas Mantap
+                            </span>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Ayam Goreng Penyet Meranti</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 20.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Potongan ayam ungkep bumbu kuning juicy dipenyet di atas sambal ulek terasi hangat & kremesan gurih.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Ayam Goreng Penyet Meranti', 20000, 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 3 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="bebek-seafood">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1514944288352-fffac99f0bdf?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Bebek+Goreng';"
+                                 alt="Bebek Goreng Empuk" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Bebek Goreng Sambal Hijau</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 28.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Daging bebek empuk tanpa bau amis, dipadu dengan racikan sambal cabai hijau meranti yang meresap sempurna.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Bebek Goreng Sambal Hijau', 28000, 'https://images.unsplash.com/photo-1514944288352-fffac99f0bdf?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 4 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="bebek-seafood">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Udang+Goreng';"
+                                 alt="Udang Goreng Tepung" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Udang Goreng Crispy</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 25.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Udang segar dibalut tepung renyah gurih disajikan dengan cocolan sambal matang khas Meranti.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Udang Goreng Crispy', 25000, 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 5 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="pendamping">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Tahu+Tempe';"
+                                 alt="Tahu & Tempe Goreng" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Tahu & Tempe Goreng Bumbu</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 6.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                2 potong tahu & 2 potong tempe berbumbu gurih yang hangat dan renyah cocok pelengkap lauk.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Tahu & Tempe Goreng Bumbu', 6000, 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 6 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="pendamping">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Cah+Kangkung';"
+                                 alt="Cah Kangkung Terasi" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Cah Kangkung Terasi Hotplate</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 12.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Kangkung segar ditumis cepat dengan bumbu terasi, rasanya manis pedas & tetap renyah saat dikunyah.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Cah Kangkung Terasi Hotplate', 12000, 'https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 7 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="minuman">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Es+Teh+Manis';"
+                                 alt="Es Teh Manis Jumbo" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Es Teh Manis Jumbo</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 5.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Seduhan teh melati wangi khas yang segar, manis pas penawar rasa pedas sambal.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Es Teh Manis Jumbo', 5000, 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 8 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="minuman">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Es+Jeruk+Peras';"
+                                 alt="Es Jeruk Peras Segar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Es Jeruk Peras Segar</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 8.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Perasan jeruk asli tanpa pemanis buatan, dingin dan menyegarkan tenggorokan.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Es Jeruk Peras Segar', 8000, 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 8B: Es Kelapa Muda -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="minuman">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1525385133512-2f3bdd039054?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Es+Kelapa+Muda';"
+                                 alt="Es Kelapa Muda Segar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-3 right-3 bg-amber-500 text-gray-950 text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1 shadow">
+                                🥥 Favorit
+                            </span>
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Es Kelapa Muda Meranti</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 10.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Daging kelapa muda gurih lembut disajikan murni dengan es & sirup gula merah aren manis alami.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Es Kelapa Muda Meranti', 10000, 'https://images.unsplash.com/photo-1525385133512-2f3bdd039054?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 8C: Es Soda Gembira -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="minuman">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Soda+Gembira';"
+                                 alt="Es Soda Gembira" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Es Soda Gembira</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 12.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Kombinasi kesegaran air soda, kental manis gurih, dan sirup merah penawar pedas yang sempurna.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Es Soda Gembira', 12000, 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 8D: Es Jeruk Nipis Selasih -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="minuman">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Jeruk+Nipis+Selasih';"
+                                 alt="Es Jeruk Nipis Selasih" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Es Jeruk Nipis Selasih</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 9.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Perasan jeruk nipis asam manis segar bertabur biji selasih untuk melunturkan dahaga dan minyak.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Es Jeruk Nipis Selasih', 9000, 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 8E: Teh Tawar / Teh Hangat -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="minuman">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Teh+Hangat+Tawar';"
+                                 alt="Teh Tawar / Warm Tea" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Teh Hangat / Es Teh Tawar</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 3.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Seduhan teh hitam wangi melati pilihan tanpa gula, penetralisir rasa pedas yang ampuh.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Teh Hangat / Es Teh Tawar', 3000, 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Menu Item 9 -->
+                <div class="menu-card bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden hover:border-brand-600/50 transition-all duration-300 flex flex-col justify-between group" data-category="pendamping">
+                    <div>
+                        <div class="relative overflow-hidden h-52">
+                            <img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=600&auto=format&fit=crop" 
+                                 onerror="this.onerror=null; this.src='https://placehold.co/400x300/1e1e1e/f43f5e?text=Nasi+Uduk';"
+                                 alt="Nasi Uduk Gurih" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start">
+                                <h4 class="text-lg font-bold text-white font-serif">Nasi Uduk Meranti Beraroma</h4>
+                                <span class="text-brand-500 font-extrabold text-base">Rp 6.000</span>
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2 leading-relaxed">
+                                Nasi santan gurih bertabur bawang goreng renyah & daun pandan yang harum.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-5 pt-0">
+                        <button onclick="addToCart('Nasi Uduk Meranti Beraroma', 6000, 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?q=80&w=200&auto=format&fit=crop')" 
+                                class="w-full bg-gray-800 hover:bg-brand-600 text-gray-200 hover:text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fa-solid fa-cart-plus"></i> Tambah Ke Pesanan
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-950 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-gray-900/80 p-8 sm:p-12 rounded-3xl border border-brand-900/40 relative overflow-hidden">
+                <div class="space-y-5">
+                    <span class="bg-brand-600/20 text-brand-400 text-xs font-extrabold px-3.5 py-1.5 rounded-full border border-brand-600/30">
+                        🔥 Rahasia Kelezatan Meranti
+                    </span>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold font-serif text-white">
+                        Pilih Level Pedas & Varian Sambal Impianmu!
+                    </h3>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        Kami mengulek sambal segar setiap ada pesanan menggunakan cobek batu alami. Pilih tingkat kepedasan yang pas untuk selera makanmu hari ini!
+                    </p>
+
+                    <div class="space-y-3 pt-2">
+                        <div class="flex items-center gap-3 bg-gray-950 p-3 rounded-xl border border-gray-800">
+                            <span class="text-xl">🌶️</span>
+                            <div>
+                                <h5 class="text-sm font-bold text-white">Level 1 - Sambal Sedang</h5>
+                                <p class="text-xs text-gray-400">Gurih terasi dominan dengan rasa pedas manis pas.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 bg-gray-950 p-3 rounded-xl border border-gray-800">
+                            <span class="text-xl">🌶️🌶️</span>
+                            <div>
+                                <h5 class="text-sm font-bold text-white">Level 2 - Pedas Mantap (Favorit)</h5>
+                                <p class="text-xs text-gray-400">Paduan cabai rawit & terasi matang bikin merem melek.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 bg-gray-950 p-3 rounded-xl border border-gray-800">
+                            <span class="text-xl">🌶️🌶️🌶️</span>
+                            <div>
+                                <h5 class="text-sm font-bold text-white">Level 3 - Pedas Mercon Nampol</h5>
+                                <p class="text-xs text-gray-400">Ekstra cabai setan rawit merah segar khusus pecinta pedas ekstrem!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative flex justify-center">
+                    <div class="relative w-full max-w-md">
+                        <!-- Red glow backdrop effect -->
+                        <div class="absolute -inset-1 bg-gradient-to-r from-brand-600 to-amber-500 rounded-3xl blur-lg opacity-40 animate-pulse"></div>
+                        
+                        <div class="relative bg-gray-950 rounded-3xl border border-brand-600/30 overflow-hidden shadow-2xl">
+                            <!-- Sambal Colek Image -->
+                            <div class="relative h-64 sm:h-72 overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?q=80&w=800&auto=format&fit=crop" 
+                                     onerror="this.onerror=null; this.src='https://placehold.co/600x400/881337/ffffff?text=Sambal+Colek+Cobek+Asli';" 
+                                     alt="Sambal Colek Terasi Meranti" 
+                                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                                
+                                <span class="absolute top-3 left-3 bg-brand-600/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-brand-400/30">
+                                    <i class="fa-solid fa-pepper-hot text-amber-400"></i> Sambal Ulek Dadakan
+                                </span>
+                            </div>
+
+                            <!-- Card Caption & Details -->
+                            <div class="p-6 text-center space-y-3 bg-gradient-to-t from-gray-950 via-gray-950 to-gray-900/90">
+                                <h4 class="text-xl font-bold text-white font-serif flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-mortar-pestle text-brand-500"></i> Sambal Colek Terasi Meranti
+                                </h4>
+                                <p class="text-xs text-gray-300 leading-relaxed">
+                                    Diulek dadakan pada cobek batu asli dari cabai rawit pilihan, terasi udang bakar, tomat segar, dan perasan jeruk nipis harum.
+                                </p>
+                                <a href="#menu" class="inline-flex items-center gap-2 bg-gradient-to-r from-brand-600 to-amberbrand-600 hover:from-brand-500 hover:to-amberbrand-500 text-white font-bold px-6 py-2.5 rounded-xl transition text-xs shadow-lg shadow-brand-900/50 mt-1">
+                                    <i class="fa-solid fa-utensils"></i> Pesan & Pilih Level Pedas
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tentang" class="py-20 bg-gray-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e1e1e/f43f5e?text=Warung+Meranti';"
+                         alt="Warung Pecel Lele Meranti" class="rounded-3xl shadow-2xl border border-gray-800 w-full object-cover h-96">
+                    <div class="absolute -bottom-6 -right-6 bg-gradient-to-br from-brand-600 to-amberbrand-600 p-6 rounded-2xl shadow-2xl hidden sm:block">
+                        <p class="text-3xl font-extrabold text-white">10+</p>
+                        <p class="text-xs font-medium text-white/90">Tahun Menjaga Kualitas Rasa</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <span class="text-xs font-extrabold text-brand-500 uppercase tracking-widest">Tentang Warung Kami</span>
+                    <h2 class="text-3xl sm:text-4xl font-black font-serif text-white">Cerita Rasa Pecel Lele Meranti</h2>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        Berawal dari warung tenda kuliner malam, **Pecel Lele Meranti** tumbuh menjadi pilihan utama pecinta kuliner penyetan. Kami berkomitmen menyajikan lele crispy dan ayam penyet dengan bahan paling segar setiap hari.
+                    </p>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">
+                        Keunggulan utama kami terletak pada racikan bumbu kuning ungkep yang meresap hingga ke dalam daging, serta sambal ulek khas cobek batu yang tidak memakai bahan pengawet.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4 pt-4">
+                        <div class="border border-gray-800 bg-gray-900 p-4 rounded-xl">
+                            <i class="fa-solid fa-heart text-brand-500 text-xl mb-2"></i>
+                            <h4 class="text-sm font-bold text-white">Rasa Otentik</h4>
+                            <p class="text-xs text-gray-400 mt-1">Resep warisan keluarga yang selalu dipertahankan.</p>
+                        </div>
+                        <div class="border border-gray-800 bg-gray-900 p-4 rounded-xl">
+                            <i class="fa-solid fa-hand-holding-dollar text-amber-400 text-xl mb-1"></i>
+                            <h4 class="text-sm font-bold text-white">Harga Bersahabat</h4>
+                            <p class="text-xs text-gray-400 mt-1">Porsi kenyang, lezat, tak menguras kantong.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimoni" class="py-20 bg-gray-950 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <h2 class="text-xs font-extrabold text-amber-400 uppercase tracking-widest mb-2">Ulasan Pelanggan</h2>
+                <h3 class="text-3xl sm:text-4xl font-black font-serif text-white">Apa Kata Mereka?</h3>
+                <p class="text-gray-400 text-sm mt-2">Ulasan jujur dari para pecinta lele crispy & sambal ulek Meranti.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review Card 1 -->
+                <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex text-amber-400 text-sm gap-1 mb-3">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-xs sm:text-sm leading-relaxed italic">
+                            "Lelenya beneran garing di luar tapi dagingnya tetep juicy manis. Sambal terasinya paling juara se-Meranti! Nasi uduknya juga gurih wangi."
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center gap-3 pt-4 border-t border-gray-800">
+                        <div class="w-10 h-10 rounded-full bg-brand-600/30 text-brand-400 font-bold flex items-center justify-center text-sm">
+                            B
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white">Budi Santoso</h5>
+                            <p class="text-[11px] text-gray-400">Pelanggan Setia</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Card 2 -->
+                <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex text-amber-400 text-sm gap-1 mb-3">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-xs sm:text-sm leading-relaxed italic">
+                            "Ayam penyetnya mantap banget pedesnya bikin nambah nasi 2 kali. Pengiriman online via WhatsApp pesenan juga cepet dan masih anget waktu dateng."
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center gap-3 pt-4 border-t border-gray-800">
+                        <div class="w-10 h-10 rounded-full bg-amber-500/30 text-amber-400 font-bold flex items-center justify-center text-sm">
+                            R
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white">Rina Marlina</h5>
+                            <p class="text-[11px] text-gray-400">Food Lover</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Card 3 -->
+                <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex text-amber-400 text-sm gap-1 mb-3">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-xs sm:text-sm leading-relaxed italic">
+                            "Harganya terjangkau banget buat porsi yang melimpah. Bebek sambal hijau & es jeruknya kombinasi wajib kalo makan malam di sini!"
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center gap-3 pt-4 border-t border-gray-800">
+                        <div class="w-10 h-10 rounded-full bg-emerald-500/30 text-emerald-400 font-bold flex items-center justify-center text-sm">
+                            A
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-white">Andi Wijaya</h5>
+                            <p class="text-[11px] text-gray-400">Pengunjung Lokal</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="lokasi" class="py-20 bg-gray-950 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                
+                <!-- Left Info Details -->
+                <div class="lg:col-span-5 flex flex-col justify-between space-y-6">
+                    <div>
+                        <span class="text-xs font-extrabold text-brand-500 uppercase tracking-widest">Kunjungi Kami</span>
+                        <h2 class="text-3xl font-black font-serif text-white mt-1">Lokasi Warung & Jam Buka</h2>
+                        <p class="text-gray-400 text-sm leading-relaxed mt-2">
+                            Kami siap melayani Anda baik untuk makan di tempat (Dine-in), dibungkus (Takeaway), maupun pesan antar area Meranti dan sekitarnya.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 bg-gray-900 p-4 rounded-2xl border border-gray-800">
+                            <div class="w-10 h-10 bg-brand-600/20 text-brand-500 rounded-xl flex items-center justify-center shrink-0 text-lg">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Alamat Utama</h4>
+                                <p class="text-xs text-gray-400 mt-1">Jl. Imam Bonjol No.45 (Samping Lapangan / Depan Indomaret), Meranti.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 bg-gray-900 p-4 rounded-2xl border border-gray-800">
+                            <div class="w-10 h-10 bg-amber-500/20 text-amber-400 rounded-xl flex items-center justify-center shrink-0 text-lg">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Jam Operasional</h4>
+                                <p class="text-xs text-gray-300 font-semibold mt-1">Buka Setiap Hari: 17.00 - 00.00 WIB</p>
+                                <p class="text-[11px] text-emerald-400 mt-0.5">● Siap Melayani Kuliner Malam Anda</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 bg-gray-900 p-4 rounded-2xl border border-gray-800">
+                            <div class="w-10 h-10 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center shrink-0 text-lg">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Pesan Antar / Delivery</h4>
+                                <p class="text-xs text-gray-400 mt-1">WhatsApp: <span class="text-emerald-400 font-bold">+62 812-3456-7890</span></p>
+                                <p class="text-[11px] text-gray-400 mt-0.5">Layanan cepat & responsif</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Interactive Map Box -->
+                <div class="lg:col-span-7 flex flex-col justify-between">
+                    <div class="bg-gray-900 p-4 rounded-3xl border border-gray-800 shadow-2xl relative overflow-hidden h-full flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-3 px-2">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-map-location-dot text-brand-500 text-lg"></i>
+                                <h4 class="text-sm font-bold text-white font-serif">Peta Interaktif Warung</h4>
+                            </div>
+                            <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Buka 17.00 - 00.00 WIB
+                            </span>
+                        </div>
+                        
+                        <!-- Leaflet Canvas Container -->
+                        <div id="map" class="w-full h-80 lg:h-full min-h-[320px] rounded-2xl border border-gray-800/80 z-10 shadow-inner"></div>
+
+                        <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs bg-gray-950 p-3 rounded-xl border border-gray-800">
+                            <span class="text-gray-400 text-center sm:text-left">
+                                <i class="fa-solid fa-location-arrow text-brand-500 mr-1"></i> Jl. Imam Bonjol No.45 (Samping Lapangan), Meranti
+                            </span>
+                            <a href="https://www.google.com/maps/search/?api=1&query=Jalan+Imam+Bonjol+Kepulauan+Meranti" target="_blank" rel="noopener noreferrer" 
+                               class="bg-brand-600 hover:bg-brand-500 text-white font-bold px-4 py-2 rounded-lg shadow transition flex items-center gap-2 text-xs shrink-0">
+                                <i class="fa-solid fa-diamond-turn-right"></i> Buka Google Maps
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none transition-opacity duration-300 opacity-0">
+        <!-- Backdrop -->
+        <div onclick="toggleCart()" id="cart-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+
+        <!-- Drawer Body -->
+        <div class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-gray-950 border-l border-gray-800 shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300 pointer-events-auto overflow-y-auto" id="cart-panel">
+            
+            <!-- Header -->
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-gray-800">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-basket-shopping text-brand-500 text-xl"></i>
+                        <h3 class="text-lg font-extrabold text-white font-serif">Keranjang Pesanan</h3>
+                    </div>
+                    <button onclick="toggleCart()" class="text-gray-400 hover:text-white p-2">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Items Container -->
+                <div id="cart-items" class="py-4 space-y-4 max-h-[45vh] overflow-y-auto pr-1">
+                    <!-- Cart items will be rendered dynamically here -->
+                </div>
+            </div>
+
+            <!-- Footer & Checkout Form -->
+            <div class="border-t border-gray-800 pt-4 space-y-4">
+                
+                <!-- Order Options Form -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Nama Pemesan</label>
+                        <input type="text" id="customer-name" placeholder="Contoh: Mas Budi" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Tipe Pesanan</label>
+                        <select id="order-type" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-500 focus:outline-none">
+                            <option value="Takeaway / Bungkus">Takeaway (Bungkus Bawa Pulang)</option>
+                            <option value="Dine-in (Makan di Tempat)">Dine-in (Makan di Tempat)</option>
+                            <option value="Delivery (Pesan Antar)">Delivery (Kirim ke Alamat)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 mb-1">Catatan Sambal / Pesanan (Opsional)</label>
+                        <input type="text" id="order-notes" placeholder="Contoh: Sambal pedas banget, es teh manisnya dikit aja" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2 text-xs text-white focus:border-brand-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Pricing Total -->
+                <div class="bg-gray-900 p-4 rounded-xl border border-gray-800 space-y-1.5">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>Subtotal</span>
+                        <span id="cart-subtotal">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>Lalapan & Sambal</span>
+                        <span class="text-emerald-400 font-semibold">GRATIS</span>
+                    </div>
+                    <div class="flex justify-between text-sm font-extrabold text-white pt-2 border-t border-gray-800">
+                        <span>Total Bayar</span>
+                        <span id="cart-total" class="text-brand-500">Rp 0</span>
+                    </div>
+                </div>
+
+                <!-- Checkout Button -->
+                <button onclick="checkoutWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Kirim Pesanan ke WhatsApp
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="bg-gray-950 border-t border-gray-800 py-12 text-gray-400 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+                
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                        <i class="fa-solid fa-fire-burner"></i>
+                    </div>
+                    <div>
+                        <span class="text-lg font-extrabold text-white font-serif">Pecel Lele Meranti</span>
+                        <p class="text-[11px] text-gray-400">Crispy, Gurih & Sambal Ulek Cobek Asli</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-6 font-medium text-gray-400">
+                    <a href="#home" class="hover:text-brand-500 transition">Beranda</a>
+                    <a href="#menu" class="hover:text-brand-500 transition">Menu</a>
+                    <a href="#paket" class="hover:text-brand-500 transition">Promo</a>
+                    <a href="#lokasi" class="hover:text-brand-500 transition">Lokasi</a>
+                </div>
+
+                <p class="text-gray-400">
+                    &copy; 2026 Pecel Lele Meranti. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Application Logic Script -->
+    <script>
+        let cart = [];
+
+        // Toggle Mobile Navigation
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Menu Filtering Logic
+        function filterMenu(category) {
+            const buttons = document.querySelectorAll('.category-btn');
+            const items = document.querySelectorAll('.menu-card');
+
+            buttons.forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.classList.add('bg-brand-600', 'text-white', 'border-brand-500');
+                    btn.classList.remove('bg-gray-900', 'text-gray-300', 'border-gray-800');
+                } else {
+                    btn.classList.remove('bg-brand-600', 'text-white', 'border-brand-500');
+                    btn.classList.add('bg-gray-900', 'text-gray-300', 'border-gray-800');
+                }
+            });
+
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Show Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        // Add Item to Cart
+        function addToCart(name, price, img) {
+            const existingIndex = cart.findIndex(item => item.name === name);
+            if (existingIndex > -1) {
+                cart[existingIndex].qty += 1;
+            } else {
+                cart.push({
+                    name: name,
+                    price: price,
+                    img: img,
+                    qty: 1
+                });
+            }
+            updateCartUI();
+            showToast(`'${name}' ditambahkan ke keranjang!`);
+        }
+
+        // Update Quantity
+        function updateQty(index, change) {
+            cart[index].qty += change;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        // Update Cart Drawer UI & Badge
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartBadge = document.getElementById('cart-badge');
+            const cartSubtotal = document.getElementById('cart-subtotal');
+            const cartTotal = document.getElementById('cart-total');
+
+            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            cartBadge.innerText = totalCount;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fa-solid fa-utensils text-4xl mb-3 opacity-40"></i>
+                        <p class="text-sm font-medium">Keranjang kamu masih kosong.</p>
+                        <p class="text-xs text-gray-400 mt-1">Pilih menu favoritmu di atas ya!</p>
+                    </div>
+                `;
+            } else {
+                cartItemsContainer.innerHTML = cart.map((item, index) => `
+                    <div class="flex items-center justify-between gap-3 bg-gray-900 p-3 rounded-xl border border-gray-800">
+                        <img src="${item.img}" alt="${item.name}" class="w-14 h-14 object-cover rounded-lg shrink-0">
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-xs font-bold text-white truncate">${item.name}</h5>
+                            <p class="text-xs text-brand-500 font-extrabold mt-0.5">Rp ${item.price.toLocaleString('id-ID')}</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-950 px-2 py-1 rounded-lg border border-gray-800">
+                            <button onclick="updateQty(${index}, -1)" class="text-gray-400 hover:text-white text-xs px-1.5 py-0.5 font-bold">-</button>
+                            <span class="text-xs font-bold text-white w-4 text-center">${item.qty}</span>
+                            <button onclick="updateQty(${index}, 1)" class="text-gray-400 hover:text-white text-xs px-1.5 py-0.5 font-bold">+</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            cartSubtotal.innerText = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+            cartTotal.innerText = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+        }
+
+        // Toggle Cart Drawer
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            const panel = document.getElementById('cart-panel');
+
+            if (drawer.classList.contains('opacity-0')) {
+                drawer.classList.remove('opacity-0', 'pointer-events-none');
+                panel.classList.remove('translate-x-full');
+            } else {
+                panel.classList.add('translate-x-full');
+                setTimeout(() => {
+                    drawer.classList.add('opacity-0', 'pointer-events-none');
+                }, 300);
+            }
+        }
+
+        // WhatsApp Checkout Direct Link Generator
+        function checkoutWhatsApp() {
+            if (cart.length === 0) {
+                showToast('Keranjang kamu masih kosong!');
+                return;
+            }
+
+            const name = document.getElementById('customer-name').value.trim() || 'Pelanggan Pecel Lele Meranti';
+            const type = document.getElementById('order-type').value;
+            const notes = document.getElementById('order-notes').value.trim() || 'Tidak ada';
+
+            let text = `Halo *Pecel Lele Meranti*, saya mau pesan:\n\n`;
+            text += `👤 *Nama:* ${name}\n`;
+            text += `📌 *Tipe:* ${type}\n`;
+            text += `📝 *Catatan:* ${notes}\n\n`;
+            text += `📋 *Daftar Pesanan:*\n`;
+
+            let totalPrice = 0;
+            cart.forEach((item, i) => {
+                const sub = item.price * item.qty;
+                totalPrice += sub;
+                text += `${i + 1}. ${item.name} (${item.qty}x) = Rp ${sub.toLocaleString('id-ID')}\n`;
+            });
+
+            text += `\n💰 *Total Pembayaran:* Rp ${totalPrice.toLocaleString('id-ID')}\n\n`;
+            text += `Mohon konfirmasi pesanan ya. Terima kasih! 🌶️`;
+
+            const encodedText = encodeURIComponent(text);
+            const waNumber = '6281234567890';
+            window.open(`https://wa.me/${waNumber}?text=${encodedText}`, '_blank');
+        }
+
+        window.onload = function() {
+            updateCartUI();
+
+            // Initialize Interactive Map with Leaflet JS & Dark Tiles
+            if (document.getElementById('map')) {
+                const merantiCoords = [1.0118, 102.7078];
+                
+                const map = L.map('map', {
+                    center: merantiCoords,
+                    zoom: 16,
+                    zoomControl: true,
+                    scrollWheelZoom: false
+                });
+
+                // CartoDB Dark Matter Tile Layer
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(map);
+
+                // Custom Map Pin Marker
+                const customIcon = L.divIcon({
+                    className: 'custom-map-pin',
+                    html: `
+                        <div class="relative flex items-center justify-center">
+                            <span class="absolute w-8 h-8 bg-brand-600/50 rounded-full animate-ping"></span>
+                            <div class="w-10 h-10 bg-gradient-to-br from-brand-600 to-amberbrand-500 rounded-full border-2 border-white flex items-center justify-center text-white shadow-xl">
+                                <i class="fa-solid fa-fire-burner text-base"></i>
+                            </div>
+                        </div>
+                    `,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20],
+                    popupAnchor: [0, -20]
+                });
+
+                const marker = L.marker(merantiCoords, { icon: customIcon }).addTo(map);
+                
+                marker.bindPopup(`
+                    <div style="font-family: 'Plus Jakarta Sans', sans-serif; padding: 4px; color: #1e293b;">
+                        <h4 style="font-weight: 800; font-size: 14px; color: #be123c; margin-bottom: 2px;">Pecel Lele Meranti</h4>
+                        <p style="font-size: 11px; color: #475569; margin-bottom: 6px; line-height: 1.3;">Jl. Imam Bonjol No.45 (Samping Lapangan / Depan Indomaret), Meranti</p>
+                        <p style="font-size: 11px; font-weight: 700; color: #d97706; margin-bottom: 8px;">🔥 Buka Setiap Hari: 17.00 - 00.00 WIB</p>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Jalan+Imam+Bonjol+Kepulauan+Meranti" target="_blank" 
+                           style="display: block; text-align: center; background: #be123c; color: white; padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 11px; font-weight: bold;">
+                           Petunjuk Arah Google Maps &rarr;
+                        </a>
+                    </div>
+                `, { maxWidth: 220 }).openPopup();
+            }
+        };
+    </script>
+</body>
+</html>
